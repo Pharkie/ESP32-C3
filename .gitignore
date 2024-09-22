@@ -1,0 +1,4 @@
+*.code-workspace
+secrets.py
+.micropico
+.vscode
