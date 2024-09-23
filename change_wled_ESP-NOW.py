@@ -1,38 +1,44 @@
 import network
 import espnow
-import time
 
 # WLED controller MAC address (replace with the actual MAC address of the WLED controller)
 wled_mac = b'\xec\x64\xc9\xa7\x8c\x5c'
 
-# JSON payload to set preset 2
-payload = b'{"ps": 2}'
+# Example payloads for WIZmote button presses
+payload_button_1 = b'{"bssid": "ecda3b32fa88", "button": 16, "sequence": 1}'
+payload_button_2 = b'{"bssid": "ecda3b32fa88", "button": 17, "sequence": 1}'
+payload_button_3 = b'{"bssid": "ecda3b32fa88", "button": 18, "sequence": 1}'
+payload_button_4 = b'{"bssid": "ecda3b32fa88", "button": 19, "sequence": 1}'
 
 def get_mac_address():
     wlan = network.WLAN(network.STA_IF)
     mac = wlan.config('mac')
-    mac_address = ':'.join(['{:02x}'.format(b) for b in mac])
+    mac_address = ''.join(['{:02x}'.format(b) for b in mac])
     return mac_address
 
-def send_espnow_message(peer_mac, message):
+def initialize_espnow():
+    # Initialize Wi-Fi in station mode
+    wlan = network.WLAN(network.STA_IF)
+    wlan.active(True)
+
+    # Initialize ESP-NOW
     e = espnow.ESPNow()
-    e.add_peer(peer_mac)
-    
+    e.active(True)
+    e.add_peer(wled_mac)
+    return e
+
+def send_espnow_message(e, message):
     try:
-        e.send(peer_mac, message)
+        e.send(wled_mac, message)
         print("Message sent successfully.")
-    except Exception as e:
-        print("Error sending message:", e)
+    except Exception as prob:
+        print("Error sending message:", prob)
 
 # Print the MAC address
-print("MAC Address:", get_mac_address())
-
-# Initialize Wi-Fi in station mode
-wlan = network.WLAN(network.STA_IF)
-wlan.active(True)
+print("ESP32-C3 MAC Address:", get_mac_address())
 
 # Initialize ESP-NOW
-e = espnow.ESPNow()
+espnow_instance = initialize_espnow()
 
-# Send the ESP-NOW message to set WLED to preset 2
-send_espnow_message(wled_mac, payload)
+# Send the ESP-NOW message for button 1 press
+send_espnow_message(espnow_instance, payload_button_1)
