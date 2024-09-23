@@ -20,7 +20,6 @@ def connect_to_wifi(ssid, password):
         print(".", end="")
         time.sleep(1)
     print("\nConnected to Wi-Fi")
-    print("\nConnected to Wi-Fi")
 
 
 def set_wled_preset(url, data):
