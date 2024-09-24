@@ -48,13 +48,15 @@ class WIZmote:
         msg += struct.pack('<4B', *[urandom.getrandbits(8) for _ in range(4)])  # Random bytes
 
         try:
-            self.espnow.send(wled_mac, msg)
-            print("Message sent successfully.")
+            for channel in range(1, 14):  # Iterate through Wi-Fi channels 1 to 13
+                network.WLAN(network.STA_IF).config(channel=channel)
+                self.espnow.send(wled_mac, msg)
+            print("Message sent successfully on all channels.")
         except Exception as e:
             print("Error sending message:", e)
         
         self.sequence += 1
 
-# Example usage
+# Test
 wizmote = WIZmote()
-wizmote.send_button("2")
+wizmote.send_button("OFF")
