@@ -1,34 +1,38 @@
-# With thanks to https://github.com/ChuckMash/ESPythoNOW/blob/main/examples/wizmote_send.py#L19-L29
-
 import network
 import espnow
 import struct
 import urandom  # Use urandom for MicroPython
 
-# for WLED controller (Gled2): ec64c9a78c5c
+# MAC for WLED controller (Gled2): ec64c9a78c5c
 wled_mac = b'\xec\x64\xc9\xa7\x8c\x5c'
 
 class WIZmote:
     def __init__(self):
-        self.sequence = 0
         self.button_lookup = {
-            "ON": 16,
-            "OFF": 17,
-            "BRIGHTER": 18,
-            "DIMMER": 19
+            "ON": 1,
+            "OFF": 2,
+            "SLEEP": 3,
+            "1": 16,
+            "2": 17,
+            "3": 18,
+            "4": 19,
+            "-": 8,
+            "+": 9
         }
         self.espnow = self.initialize_espnow()
+        self.sequence = 1
 
     def initialize_espnow(self):
         # Initialize Wi-Fi in station mode
-        wlan = network.WLAN(network.STA_IF)
+        interface = network.STA_IF
+        wlan = network.WLAN(interface)
         wlan.active(True)
 
         # Initialize ESP-NOW
-        e = espnow.ESPNow()
-        e.active(True)  # Correct method to activate ESP-NOW
-        e.add_peer(wled_mac)
-        return e
+        espnow_instance = espnow.ESPNow()
+        espnow_instance.active(True)
+        espnow_instance.add_peer(wled_mac)
+        return espnow_instance
 
     def send_button(self, button):
         msg = b""
@@ -50,4 +54,4 @@ class WIZmote:
 
 # Example usage
 wizmote = WIZmote()
-wizmote.send_button("OFF")
+wizmote.send_button("2")
