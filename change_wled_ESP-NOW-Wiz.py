@@ -1,3 +1,7 @@
+# Wizmote code derived from
+# https://github.com/ChuckMash/ESPythoNOW/blob/main/examples/wizmote_send.py#L19-L29
+# With thanks to Kilrah and Dedehai on the WLED Discord for their help and support.
+
 import network
 import espnow
 import struct
